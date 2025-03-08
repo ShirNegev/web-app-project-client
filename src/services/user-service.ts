@@ -18,7 +18,6 @@ const login = (user: User) => {
   };
 
   const uploadImage = (img: File) => {
-    console.log(img)
     const formData = new FormData();
     formData.append("file", img);
     const request = apiClient.post('/file?file=' + img.name, formData, {

@@ -7,15 +7,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import userPlaceHolder from '../assets/user-placeholder.svg';
 import User from '../interfaces/user';
 import userService from '../services/user-service';
+import AlertComponent from './alert';
+import Alerts from '../enums/alerts';
 
 const registerSchema = z
   .object({
-    profilePicture: z
-      .any()
-      .refine((file) => file?.length > 0, {
-        message: 'Profile picture is required',
-        path: ['profilePicture'],
-      }),
+    profilePicture: z.any().refine((file) => file?.length > 0, {
+      message: 'Profile picture is required',
+      path: ['profilePicture'],
+    }),
     email: z.string().email('Invalid email address'),
     fullName: z.string().min(1, 'Full name is required'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -32,6 +32,9 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
 
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState<Alerts>(Alerts.Error);
 
   const inputFileRef: { current: HTMLInputElement | null } = { current: null };
 
@@ -48,8 +51,6 @@ const Register: React.FC = () => {
   const [profilePicture] = watch(['profilePicture']);
 
   const onSubmit = (data: FormData) => {
-    console.log(data);
-
     const { request } = userService.uploadImage(data.profilePicture[0]);
     request
       .then((response) => {
@@ -65,10 +66,16 @@ const Register: React.FC = () => {
             navigate('/');
           })
           .catch((error) => {
+            setAlertMessage((error.response ? error.response.data : error.message));
+            setAlertType(Alerts.Error);
+            setShowAlert(true);
             console.error(error);
           });
       })
       .catch((error) => {
+        setAlertMessage((error.response ? error.response.data : error.message));
+        setAlertType(Alerts.Error);
+        setShowAlert(true);
         console.error(error);
       });
   };
@@ -169,6 +176,12 @@ const Register: React.FC = () => {
           </Link>
         </p>
       </div>
+      <AlertComponent
+        showAlert={showAlert}
+        alertType={alertType}
+        message={alertMessage}
+        onCloseAlert={() => setShowAlert(false)}
+      ></AlertComponent>
     </div>
   );
 };
