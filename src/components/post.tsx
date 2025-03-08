@@ -83,6 +83,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: 
           💬 {post.comments.length}
         </button>
       </div>
+      
       {/* show edit modal*/}
         {showEditModal && (
             <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
