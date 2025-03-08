@@ -3,6 +3,7 @@ import './App.css'
 import Navbar from './components/navbar'
 import LoginPage from './pages/login-page'
 import MainPage from './pages/main-page'
+import RegisterPage from "./pages/register-page";
 
 function App() {
   return (
@@ -11,7 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage></MainPage>}></Route>
         <Route path="/login" element={<LoginPage></LoginPage>}></Route>
-      </Routes>
+        <Route path="/register" element={<RegisterPage></RegisterPage>}></Route>
+       </Routes>
     </Router>
   )
 }

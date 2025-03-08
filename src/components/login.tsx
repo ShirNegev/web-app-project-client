@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const Login: React.FC = () => {
         </div>
         <div className="text-center mt-3">
           <p>
-            Don't have an account? <a href="#" className="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Sign Up</a>
+            Don't have an account? <Link className="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" to="/register">Sign Up</Link>
           </p>
         </div>
       </div>
