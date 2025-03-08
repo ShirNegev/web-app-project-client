@@ -7,6 +7,8 @@ import User from '../interfaces/user';
 import { useState } from 'react';
 import Alerts from '../enums/alerts';
 import AlertComponent from './alert';
+import { useGoogleLogin } from '@react-oauth/google';
+import googleAuth from '../interfaces/GoogleAuth';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -50,6 +52,48 @@ const Login: React.FC = () => {
       });
   };
 
+  const onGoogleLogin = useGoogleLogin({
+      onSuccess: (response) => {
+        const accessToken = response?.access_token;
+        if (!accessToken) {
+          setShowAlert(true);
+          setAlertMessage('Google login failed');
+          setAlertType(Alerts.Error);
+          return;
+        }
+
+        const { request } = userService.getUserInfoFromGoogle(accessToken);
+        request
+          .then((response) => {
+            console.log(response);
+            const googleAuth: googleAuth = {
+              email: response.data.email,
+              access_token: accessToken,
+            };
+            const { request } = userService.googleLogin(googleAuth);
+            request
+              .then(() => {
+                navigate('/');
+              })
+              .catch((error) => {
+                setShowAlert(true);
+                setAlertMessage(error.response ? error.response.data : error.message);
+                setAlertType(Alerts.Error);
+                console.error(error);
+              });
+          }).catch((error) => {
+            setShowAlert(true);
+            setAlertMessage(error.response ? error.response.data : error.message);
+            setAlertType(Alerts.Error);
+            console.error(error);
+          });
+      },
+      onError: (error) => {
+        console.error("Google Login failed:", error);
+      },
+      flow: "implicit", // Ensure we're using the correct OAuth flow
+    });
+
   return (
     <div className="card p-4" style={{ width: '35%' }}>
       <h2 className="text-center">Login</h2>
@@ -77,7 +121,7 @@ const Login: React.FC = () => {
         </button>
       </form>
       <div className="text-center mt-3">
-        <button className="btn btn-dark w-100">
+        <button className="btn btn-dark w-100" onClick={() => onGoogleLogin()}>
           <i className="bi bi-google me-2"></i>Sign in with Google
         </button>
       </div>
