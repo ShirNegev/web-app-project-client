@@ -8,7 +8,8 @@ import {
   uploadImage,
   likePost,
   unlikePost,
-  deletePost
+  deletePost,
+  editPost
 } from "../services/post-service";
 
 const Posts: React.FC = () => {
@@ -94,13 +95,29 @@ const Posts: React.FC = () => {
     setPosts(posts.filter(post => post.id !== id));
   }
 
-    const onUpdate = (id: string, newText: string, image: string) => {
-        // if (image === "") {
-        //     setPosts(posts.map(post => post.id === id ? { ...post, text: newText } : post));
-        // } 
-        // else {
-        // setPosts(posts.map(post => post.id === id ? { ...post, text: newText, image:  image} : post));
-        // }
+    const onUpdate = (id: string, newText: string, image: File | null) => {
+      if (!newText.trim() || image == null) return;
+
+      const { request } = uploadImage(image);
+  
+      request
+        .then((response) => {
+          const post: PostSubmition = {
+            text: newText,
+            image: response.data.url,
+          };
+  
+          editPost(id, post)
+          .then((createdPost) => {
+            setPosts(posts.map(post => post.id === id ? { ...post, text: newText, image: response.data.url} : post));
+          })
+          .catch((error) => {
+            console.error("Error creating post:", error);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
 
   return (

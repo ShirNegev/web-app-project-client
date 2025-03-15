@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Post from "../interfaces/Post";
 import Comment from "../interfaces/Comment";
 
-const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: string) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate }) => {
+const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate }) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -97,7 +97,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: 
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setShowEditModal(false)}>Close</button>
-                  <button type="button" className="btn btn-primary" onClick={() => {setShowEditModal(false); onUpdate(post.id, newPostText, newPostFile ? URL.createObjectURL(newPostFile) : "");}}>Save changes</button>
+                  <button type="button" className="btn btn-primary" onClick={() => {setShowEditModal(false); onUpdate(post.id, newPostText, newPostFile);}}>Save changes</button>
                 </div>
                 </div>
             </div>
