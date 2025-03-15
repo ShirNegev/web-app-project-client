@@ -5,7 +5,9 @@ import Post, { PostSubmition } from "../interfaces/Post";
 import {
   getAllPosts,
   createPost,
-  uploadImage
+  uploadImage,
+  likePost,
+  unlikePost
 } from "../services/post-service";
 
 const Posts: React.FC = () => {
@@ -56,13 +58,34 @@ const Posts: React.FC = () => {
       });
   };
 
-  const onLike = (id: string) => {
-    // if(posts.find(post => post.id === id)?.likes.includes("Shir")) {
-    //   setPosts(posts.map(post => post.id === id ? { ...post, likes: post.likes.filter(user => user !== "Shir") } : post));
-    // }
-    // else {
-    //     setPosts(posts.map(post => post.id === id ? { ...post, likes: [...post.likes, "Shir"] } : post));
-    //     }
+  const onLike = async (id: string) => {
+    if (posts.find(post => post.id === id)?.isLiked === false) {
+      await likePost(id);
+      const updatedPosts = posts.map((post) => {
+        if (post.id === id) {
+          return {
+            ...post,
+            likes: post.likes + 1,
+            isLiked: true,
+          };
+        }
+        return post;
+      });
+      setPosts(updatedPosts);
+    } else {
+      await unlikePost(id);
+      const updatedPosts = posts.map((post) => {
+        if (post.id === id) {
+          return {
+            ...post,
+            likes: post.likes - 1,
+            isLiked: false,
+          };
+        }
+        return post;
+      });
+      setPosts(updatedPosts);
+    }
   }
 
   const onDelete = (id: string) => {
