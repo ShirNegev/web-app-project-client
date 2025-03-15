@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import PostComponent from "./post";
-import Post from "../interfaces/Post";
+import Post, { PostSubmition } from "../interfaces/Post";
 
 import {
-  getAllPosts
+  getAllPosts,
+  createPost,
+  uploadImage
 } from "../services/post-service";
 
 const Posts: React.FC = () => {
@@ -27,22 +29,31 @@ const Posts: React.FC = () => {
   }, []);
 
   const addPost = () => {
-    // if (!newPostText.trim()) return;
-    // const imageUrl = newPostFile ? URL.createObjectURL(newPostFile) : newPostImage || "https://via.placeholder.com/150";
-    // const newPost: Post = {
-    //   id: posts.length + 1,
-    //   user: "Shir",
-    //   userImage: "https://foodish-api.com/images/pizza/pizza85.jpg",
-    //   timestamp: "now",
-    //   image: imageUrl,
-    //   text: newPostText,
-    //   likes: [],
-    //   comments: []
-    // };
-    // setPosts([newPost, ...posts]);
-    // setNewPostText("");
-    // setNewPostImage("");
-    // setNewPostFile(null);
+    if (!newPostText.trim() || newPostFile == null) return;
+
+    const { request } = uploadImage(newPostFile);
+
+    request
+      .then((response) => {
+        const post: PostSubmition = {
+          text: newPostText,
+          image: response.data.url,
+        };
+
+        createPost(post)
+        .then((createdPost) => {
+          setPosts([createdPost, ...posts]);
+          setNewPostText("");
+          setNewPostImage("");
+          setNewPostFile(null);
+        })
+        .catch((error) => {
+          console.error("Error creating post:", error);
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const onLike = (id: string) => {
@@ -74,7 +85,7 @@ const Posts: React.FC = () => {
             <h5>Create a New Post</h5>
             <input type="text" className="form-control mb-2" placeholder="What's on your plate today?" value={newPostText} onChange={(e) => setNewPostText(e.target.value)} />
             <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
-            {/* <button className="btn btn-primary" onClick={addPost}>Post</button> */}
+            {<button className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
           {posts.map(post => (
             <PostComponent key={post.id} post={post} currentUser="Shir" onLike={onLike} onDelete={onDelete} onUpdate={onUpdate}></PostComponent>

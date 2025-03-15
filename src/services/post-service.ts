@@ -43,18 +43,29 @@ export const getConnectedUserPosts = () => {
 };
 
 export const createPost = (post: PostSubmition) => {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<Post>((resolve, reject) => {
     console.log("Creating post..", post);
     apiClient
       .post("/posts", post)
-      .then(() => {
-        resolve();
+      .then((response) => {
+        resolve(response.data);
       })
       .catch((error) => {
         console.log(error);
         reject(error);
       });
   });
+};
+
+export const uploadImage = (img: File) => {
+  const formData = new FormData();
+  formData.append('file', img);
+  const request = apiClient.post('/file?file=' + img.name, formData, {
+    headers: {
+      'Content-Type': 'image/*',
+    },
+  });
+  return { request };
 };
 
 export const likePost = (postId: string) => {
