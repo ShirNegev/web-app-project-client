@@ -50,7 +50,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: 
   //   });
   // }
 
-  const isLiked = () => {return false;/*return post.likes.includes(currentUser)*/};
+  const isLiked = () => {return post.isLiked};
 
   return (
     <div className="card mb-3 p-0">

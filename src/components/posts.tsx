@@ -7,7 +7,8 @@ import {
   createPost,
   uploadImage,
   likePost,
-  unlikePost
+  unlikePost,
+  deletePost
 } from "../services/post-service";
 
 const Posts: React.FC = () => {
@@ -88,9 +89,10 @@ const Posts: React.FC = () => {
     }
   }
 
-  const onDelete = (id: string) => {
-    // setPosts(posts.filter(post => post.id !== id));
-    }
+  const onDelete = async (id: string) => {
+    await deletePost(id);
+    setPosts(posts.filter(post => post.id !== id));
+  }
 
     const onUpdate = (id: string, newText: string, image: string) => {
         // if (image === "") {
@@ -111,7 +113,7 @@ const Posts: React.FC = () => {
             {<button className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
           {posts.map(post => (
-            <PostComponent key={post.id} post={post} currentUser="Shir" onLike={onLike} onDelete={onDelete} onUpdate={onUpdate}></PostComponent>
+            <PostComponent key={post.id} post={post} currentUser={post.author.fullName} /*TODO: take user full name from state*/ onLike={onLike} onDelete={onDelete} onUpdate={onUpdate}></PostComponent>
           ))}
           </div>
     </div>
