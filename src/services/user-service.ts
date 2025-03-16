@@ -17,6 +17,12 @@ const login = (user: User) => {
   return { request, abort: () => abortController.abort() };
 };
 
+const logout = () => {
+  const abortController = new AbortController();
+  const request = apiClient.get('/auth/logout', { signal: abortController.signal });
+  return { request, abort: () => abortController.abort() };
+}
+
 const uploadImage = (img: File) => {
   const formData = new FormData();
   formData.append('file', img);
@@ -38,16 +44,16 @@ const getUserInfoFromGoogle = (accessToken: string) => {
 };
 
 const googleLogin = (googleAuth: googleAuth) => {
-    const abortController = new AbortController();
+  const abortController = new AbortController();
   const request = apiClient.post<googleAuth>('/auth/google', googleAuth, { signal: abortController.signal });
   return { request, abort: () => abortController.abort() };
 }
 
 const getUserInfo = () => {
-    const abortController = new AbortController();
+  const abortController = new AbortController();
   const request = apiClient.get<User>('/user/connected', { signal: abortController.signal });
   return { request, abort: () => abortController.abort() };
 };
 
 
-export default { register, login, uploadImage, getUserInfoFromGoogle, googleLogin, getUserInfo };
+export default { register, login, uploadImage, getUserInfoFromGoogle, googleLogin, getUserInfo, logout };
