@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PostComponent from "./post";
 import Post, { PostSubmition } from "../interfaces/Post";
 import { useUserStore } from "../store/useUserStore";
+import Comment from "../interfaces/Comment";
 
 import {
   getAllPosts,
@@ -100,6 +101,20 @@ const Posts: React.FC = () => {
     setPosts(posts.filter(post => post._id !== id));
   }
 
+  const onAddComment = (postId: string, comment: Comment) => {
+    const updatedPosts = posts.map((post) => {
+      if (post._id === postId) {
+        return {
+          ...post,
+          comments: [...post.comments, comment]
+        };
+      }
+      return post;
+    });
+
+    setPosts(updatedPosts);
+  }
+
   const onUpdate = (id: string, newText: string, image: File | null) => {
     if (!newText.trim() || image == null) return;
 
@@ -135,7 +150,7 @@ const Posts: React.FC = () => {
             {<button className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
           {user && posts.map(post => (
-            <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate}></PostComponent>
+            <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate} onAddComment={onAddComment}></PostComponent>
           ))}
           </div>
     </div>

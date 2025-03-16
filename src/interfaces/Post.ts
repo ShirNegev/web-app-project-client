@@ -1,3 +1,5 @@
+import Comment from "../interfaces/Comment";
+
 export interface PostSubmition {
   text: string;
   image: string;
@@ -11,7 +13,7 @@ export interface Post extends PostSubmition {
     email: string;
     imageUrl: string;
   };
-  comments: [Comment];
+  comments: Comment[];
   likes: number;
   isLiked: boolean;
 }
