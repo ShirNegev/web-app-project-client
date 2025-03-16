@@ -43,4 +43,11 @@ const googleLogin = (googleAuth: googleAuth) => {
   return { request, abort: () => abortController.abort() };
 }
 
-export default { register, login, uploadImage, getUserInfoFromGoogle, googleLogin };
+const getUserInfo = () => {
+    const abortController = new AbortController();
+  const request = apiClient.get<User>('/user/connected', { signal: abortController.signal });
+  return { request, abort: () => abortController.abort() };
+};
+
+
+export default { register, login, uploadImage, getUserInfoFromGoogle, googleLogin, getUserInfo };
