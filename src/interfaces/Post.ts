@@ -8,6 +8,7 @@ export interface Post extends PostSubmition {
   timestamp: Date;
   author: {
     fullName: string;
+    email: string;
     imageUrl: string;
   };
   comments: [Comment];
