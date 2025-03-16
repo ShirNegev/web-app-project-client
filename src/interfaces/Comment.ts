@@ -1,9 +1,12 @@
 interface Comment {
-  id: number;
-  user: string;
-  userImage: string;
+  id: string;
   text: string;
-  timestamp: string;
+  author: {
+    fullName: string;
+    imageUrl: string;
+  };
+  timestamp: Date;
+  postId: string;
 }
 
 export default Comment;
