@@ -8,7 +8,7 @@ const MainPage: React.FC = () => {
         <div className="col-md-10 align-items-center">
         <Posts></Posts>
         </div>
-        <div className="col-md-2 ontainer d-flex justify-content-center align-items-center ">
+        <div className="col-md-2 container d-flex justify-content-center align-items-center ">
         <Recipes></Recipes>
         </div>
     </div>
