@@ -4,7 +4,7 @@ export interface PostSubmition {
 }
 
 export interface Post extends PostSubmition {
-  id: string;
+  _id: string;
   timestamp: Date;
   author: {
     fullName: string;

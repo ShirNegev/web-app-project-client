@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Post from "../interfaces/Post";
 import Comment from "../interfaces/Comment";
 
-const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate }) => {
+const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate }) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -56,7 +56,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: 
     <div className="card mb-3 p-0">
       <div className="card-header d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
-          <img src={post.image} alt="User" className="rounded-circle me-2" width="40" height="40" />
+          <img src={post.author.imageUrl} alt="User" className="rounded-circle me-2" width="40" height="40" />
           <div>
             <strong>{post.author.fullName}</strong>
             <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{post.timestamp.toString()}</p>
@@ -65,7 +65,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: 
         {post.author.fullName === currentUser && (
             <div>
           <button className="btn btn-outline-dark btn-sm me-2" onClick={() => {setShowEditModal(true); setNewPostText(post.text);}}><i className="bi bi-pen"></i></button>
-          <button className="btn btn-outline-danger btn-sm" onClick={() => onDelete(post.id)}><i className="bi bi-trash3"></i></button>
+          <button className="btn btn-outline-danger btn-sm" onClick={() => onDelete(post._id)}><i className="bi bi-trash3"></i></button>
           </div>
         )}
       </div>
@@ -74,7 +74,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: 
         <p>{post.text}</p>
       </div>
       <div className="card-footer d-flex bg-white">
-        <button className={`btn me-3 ${isLiked() ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => onLike(post.id)}>
+        <button className={`btn me-3 ${isLiked() ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => onLike(post._id)}>
           👍 {post.likes}
         </button>
         <button className="btn btn-outline-secondary" onClick={() => {setShowModal(true); getCommentsByPostId();}}>
@@ -97,7 +97,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: 
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setShowEditModal(false)}>Close</button>
-                  <button type="button" className="btn btn-primary" onClick={() => {setShowEditModal(false); onUpdate(post.id, newPostText, newPostFile);}}>Save changes</button>
+                  <button type="button" className="btn btn-primary" onClick={() => {setShowEditModal(false); onUpdate(post._id, newPostText, newPostFile);}}>Save changes</button>
                 </div>
                 </div>
             </div>
@@ -122,7 +122,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string; onDelete: (id: 
               <div className="modal-body text-center">
                 <img src={post.image} alt="Post" className="img-fluid mb-2" />
                 <p>{post.text}</p>
-                <button className={`btn ${isLiked() ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => onLike(post.id)}>
+                <button className={`btn ${isLiked() ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => onLike(post._id)}>
                   👍 {post.likes}
                 </button>
                 <h6 className="mt-3">Comments</h6>

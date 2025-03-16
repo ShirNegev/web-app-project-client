@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PostComponent from "./post";
 import Post, { PostSubmition } from "../interfaces/Post";
+import { useUserStore } from "../store/useUserStore";
 
 import {
   getAllPosts,
@@ -17,6 +18,7 @@ const Posts: React.FC = () => {
   const [newPostText, setNewPostText] = useState("");
   const [newPostImage, setNewPostImage] = useState("");
   const [newPostFile, setNewPostFile] = useState<File | null>(null);
+  const { user, setUser } = useUserStore();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -46,6 +48,9 @@ const Posts: React.FC = () => {
 
         createPost(post)
         .then((createdPost) => {
+          createdPost.likes = 0;
+          createdPost.isLiked = false;
+
           setPosts([createdPost, ...posts]);
           setNewPostText("");
           setNewPostImage("");
@@ -61,10 +66,10 @@ const Posts: React.FC = () => {
   };
 
   const onLike = async (id: string) => {
-    if (posts.find(post => post.id === id)?.isLiked === false) {
+    if (posts.find(post => post._id === id)?.isLiked === false) {
       await likePost(id);
       const updatedPosts = posts.map((post) => {
-        if (post.id === id) {
+        if (post._id === id) {
           return {
             ...post,
             likes: post.likes + 1,
@@ -77,7 +82,7 @@ const Posts: React.FC = () => {
     } else {
       await unlikePost(id);
       const updatedPosts = posts.map((post) => {
-        if (post.id === id) {
+        if (post._id === id) {
           return {
             ...post,
             likes: post.likes - 1,
@@ -92,33 +97,33 @@ const Posts: React.FC = () => {
 
   const onDelete = async (id: string) => {
     await deletePost(id);
-    setPosts(posts.filter(post => post.id !== id));
+    setPosts(posts.filter(post => post._id !== id));
   }
 
-    const onUpdate = (id: string, newText: string, image: File | null) => {
-      if (!newText.trim() || image == null) return;
+  const onUpdate = (id: string, newText: string, image: File | null) => {
+    if (!newText.trim() || image == null) return;
 
-      const { request } = uploadImage(image);
-  
-      request
-        .then((response) => {
-          const post: PostSubmition = {
-            text: newText,
-            image: response.data.url,
-          };
-  
-          editPost(id, post)
-          .then((createdPost) => {
-            setPosts(posts.map(post => post.id === id ? { ...post, text: newText, image: response.data.url} : post));
-          })
-          .catch((error) => {
-            console.error("Error creating post:", error);
-          });
+    const { request } = uploadImage(image);
+
+    request
+      .then((response) => {
+        const post: PostSubmition = {
+          text: newText,
+          image: response.data.url,
+        };
+
+        editPost(id, post)
+        .then((createdPost) => {
+          setPosts(posts.map(post => post._id === id ? { ...post, text: newText, image: response.data.url} : post));
         })
         .catch((error) => {
-          console.error(error);
+          console.error("Error creating post:", error);
         });
-    }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 
   return (
     <div className="container d-flex flex-column" style={{ width: "60%" }}>
@@ -129,8 +134,8 @@ const Posts: React.FC = () => {
             <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
             {<button className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
-          {posts.map(post => (
-            <PostComponent key={post.id} post={post} currentUser={post.author.fullName} /*TODO: take user full name from state*/ onLike={onLike} onDelete={onDelete} onUpdate={onUpdate}></PostComponent>
+          {user && posts.map(post => (
+            <PostComponent key={post._id} post={post} currentUser={user.fullName} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate}></PostComponent>
           ))}
           </div>
     </div>
