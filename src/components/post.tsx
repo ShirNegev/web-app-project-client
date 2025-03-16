@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Post from "../interfaces/Post";
-import Comment from "../interfaces/Comment";
+import Comment, { CommentSubmition } from "../interfaces/Comment";
+import {getPostById} from "../services/post-service";
+import {createComment} from "../services/comment-service";
 
 const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate }) => {
   const [showModal, setShowModal] = useState(false);
@@ -12,43 +14,41 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
   const [newPostText, setNewPostText] = useState("");
   const [newPostFile, setNewPostFile] = useState<File | null>(null);
 
-  const handleAddComment = () => {
-    // if (!newComment.trim()) return;
-    // const comment: Comment = {
-    //   id: Date.now(),
-    //   user: currentUser,
-    //   userImage: "https://via.placeholder.com/50",
-    //   text: newComment,
-    //   timestamp: new Date().toLocaleString()
-    // };
-    // setPostComments([...postComments, comment]);
-    // setNewComment("");
+  const handleAddComment = (postId: string) => {
+    if (!newComment.trim()) return;
+
+    setIsLoading(true);
+
+    const comment: CommentSubmition = {
+      text: newComment,
+      postId: postId
+    };
+
+    createComment(comment)
+    .then((comment) => {
+      setPostComments([...postComments, comment]);
+      setNewComment("");
+      setIsLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error", error);
+      setIsLoading(false);
+    });
   };
 
-  const handleDeleteComment = (commentId: number) => {
-    // setPostComments(postComments.filter(comment => comment.id !== commentId));
-  };
+  const getCommentsByPostId = async (postId: string) => {
+    setIsLoading(true);
 
-  const getCommentsByPostId = () => {
-    // if (post.comments.length === 0 || postComments.length !== 0) return;
-
-    // setIsLoading(true);
-    // getCommentsWithDelay(post.id).then((comments) => {
-    //   setPostComments(comments);
-    //   setIsLoading(false);
-    // } ).catch((error) => {
-    //   console.error(error);
-    //   setIsLoading(false);
-    // });
+    getPostById(postId)
+    .then((post) => {
+      setPostComments(post.comments);
+      setIsLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error", error);
+      setIsLoading(false);
+    });
   }
-
-  // const getCommentsWithDelay = async (postId: number): Promise<Comment[]> => {
-  //   return new Promise((resolve) => {
-  //       setTimeout(() => {
-  //           resolve(comments);
-  //       }, 2000);
-  //   });
-  // }
 
   const isLiked = () => {return post.isLiked};
 
@@ -77,7 +77,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
         <button className={`btn me-3 ${isLiked() ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => onLike(post._id)}>
           👍 {post.likes}
         </button>
-        <button className="btn btn-outline-secondary" onClick={() => {setShowModal(true); getCommentsByPostId();}}>
+        <button className="btn btn-outline-secondary" onClick={() => {setShowModal(true); getCommentsByPostId(post._id);}}>
           💬 {post.comments.length}
         </button>
       </div>
@@ -111,7 +111,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
             <div className="modal-content">
               <div className="modal-header">
                 <div className="d-flex align-items-center">
-                  <img src={post.image} alt="User" className="rounded-circle me-2" width="40" height="40" />
+                  <img src={post.author.imageUrl} alt="User" className="rounded-circle me-2" width="40" height="40" />
                   <div>
                     <strong>{post.author.fullName}</strong>
                     <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{post.timestamp.toString()}</p>
@@ -136,13 +136,10 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
                       <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{comment.timestamp.toString()}</p>
                       <p>{comment.text}</p>
                     </div>
-                    {comment.author.email === currentUser && (
-                      <button className="btn btn-sm btn-danger ms-auto" onClick={() => console.log("here") /*handleDeleteComment(comment.id)*/}>Delete</button>
-                    )}
                   </div>
                 ))}
                 <input type="text" className="form-control mt-2" placeholder="Add a comment..." value={newComment} onChange={(e) => setNewComment(e.target.value)} />
-                <button className="btn btn-sm btn-success mt-2" onClick={handleAddComment}>Add Comment</button>
+                <button className="btn btn-sm btn-success mt-2" onClick={() => {handleAddComment(post._id)}}>Add Comment</button>
               </div>
             </div>
           </div>
