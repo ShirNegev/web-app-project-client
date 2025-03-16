@@ -9,6 +9,7 @@ import User from '../interfaces/user';
 import userService from '../services/user-service';
 import AlertComponent from './alert';
 import Alerts from '../enums/alerts';
+import { useUserStore } from '../store/useUserStore';
 
 const registerSchema = z
   .object({
@@ -31,6 +32,7 @@ interface FormData extends z.infer<typeof registerSchema> {}
 const Register: React.FC = () => {
   const navigate = useNavigate();
 
+  const { setUser } = useUserStore();
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -63,20 +65,33 @@ const Register: React.FC = () => {
         const { request } = userService.register(user);
         request
           .then(() => {
-            navigate('/');
+            const { request } = userService.getUserInfo();
+            request
+              .then((response) => {
+                const user: User = {
+                  email: response.data.email,
+                  fullName: response.data.fullName,
+                  imageUrl: response.data.imageUrl,
+                };
+                setUser(user);
+                navigate('/');
+              })
+              .catch((error) => {
+                setAlertMessage(error.response ? error.response.data : error.message);
+                setAlertType(Alerts.Error);
+                setShowAlert(true);
+              });
           })
           .catch((error) => {
-            setAlertMessage((error.response ? error.response.data : error.message));
+            setAlertMessage(error.response ? error.response.data : error.message);
             setAlertType(Alerts.Error);
             setShowAlert(true);
-            console.error(error);
           });
       })
       .catch((error) => {
-        setAlertMessage((error.response ? error.response.data : error.message));
+        setAlertMessage(error.response ? error.response.data : error.message);
         setAlertType(Alerts.Error);
         setShowAlert(true);
-        console.error(error);
       });
   };
 

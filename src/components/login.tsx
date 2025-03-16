@@ -9,6 +9,7 @@ import Alerts from '../enums/alerts';
 import AlertComponent from './alert';
 import { useGoogleLogin } from '@react-oauth/google';
 import googleAuth from '../interfaces/GoogleAuth';
+import { useUserStore } from '../store/useUserStore';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -20,6 +21,7 @@ interface FormData extends z.infer<typeof loginSchema> {}
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
+  const { setUser } = useUserStore();
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState<Alerts>(Alerts.Error);
@@ -42,57 +44,84 @@ const Login: React.FC = () => {
     const { request } = userService.login(user);
     request
       .then(() => {
-        navigate('/');
+        const { request } = userService.getUserInfo();
+        request
+          .then((response) => {
+            const user: User = {
+              email: response.data.email,
+              fullName: response.data.fullName,
+              imageUrl: response.data.imageUrl,
+            };
+            setUser(user);
+            navigate('/');
+          })
+          .catch((error) => {
+            setShowAlert(true);
+            setAlertMessage(error.response ? error.response.data : error.message);
+            setAlertType(Alerts.Error);
+          });
       })
       .catch((error) => {
         setShowAlert(true);
         setAlertMessage(error.response ? error.response.data : error.message);
         setAlertType(Alerts.Error);
-        console.error(error);
       });
   };
 
   const onGoogleLogin = useGoogleLogin({
-      onSuccess: (response) => {
-        const accessToken = response?.access_token;
-        if (!accessToken) {
-          setShowAlert(true);
-          setAlertMessage('Google login failed');
-          setAlertType(Alerts.Error);
-          return;
-        }
+    onSuccess: (response) => {
+      const accessToken = response?.access_token;
+      if (!accessToken) {
+        setShowAlert(true);
+        setAlertMessage('Google login failed');
+        setAlertType(Alerts.Error);
+        return;
+      }
 
-        const { request } = userService.getUserInfoFromGoogle(accessToken);
-        request
-          .then((response) => {
-            console.log(response);
-            const googleAuth: googleAuth = {
-              email: response.data.email,
-              access_token: accessToken,
-            };
-            const { request } = userService.googleLogin(googleAuth);
-            request
-              .then(() => {
-                navigate('/');
-              })
-              .catch((error) => {
-                setShowAlert(true);
-                setAlertMessage(error.response ? error.response.data : error.message);
-                setAlertType(Alerts.Error);
-                console.error(error);
-              });
-          }).catch((error) => {
-            setShowAlert(true);
-            setAlertMessage(error.response ? error.response.data : error.message);
-            setAlertType(Alerts.Error);
-            console.error(error);
-          });
-      },
-      onError: (error) => {
-        console.error("Google Login failed:", error);
-      },
-      flow: "implicit", // Ensure we're using the correct OAuth flow
-    });
+      const { request } = userService.getUserInfoFromGoogle(accessToken);
+      request
+        .then((response) => {
+          const googleAuth: googleAuth = {
+            email: response.data.email,
+            access_token: accessToken,
+          };
+          const { request } = userService.googleLogin(googleAuth);
+          request
+            .then(() => {
+              const { request } = userService.getUserInfo();
+              request
+                .then((response) => {
+                  const user: User = {
+                    email: response.data.email,
+                    fullName: response.data.fullName,
+                    imageUrl: response.data.imageUrl,
+                  };
+                  setUser(user);
+                  navigate('/');
+                })
+                .catch((error) => {
+                  setShowAlert(true);
+                  setAlertMessage(error.response ? error.response.data : error.message);
+                  setAlertType(Alerts.Error);
+                });
+            })
+            .catch((error) => {
+              setShowAlert(true);
+              setAlertMessage(error.response ? error.response.data : error.message);
+              setAlertType(Alerts.Error);
+            });
+        })
+        .catch((error) => {
+          setShowAlert(true);
+          setAlertMessage(error.response ? error.response.data : error.message);
+          setAlertType(Alerts.Error);
+        });
+    },
+    onError: (error) => {
+      console.error('Google Login failed:', error);
+    },
+    flow: 'implicit', // Ensure we're using the correct OAuth flow
+  });
 
   return (
     <div className="card p-4" style={{ width: '35%' }}>
