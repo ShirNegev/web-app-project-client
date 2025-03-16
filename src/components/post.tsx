@@ -5,7 +5,7 @@ import Comment, { CommentSubmition } from "../interfaces/Comment";
 import {getPostById} from "../services/post-service";
 import {createComment} from "../services/comment-service";
 
-const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate }) => {
+const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null) => void; onAddComment: (postId: string, comment: Comment) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate, onAddComment }) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -27,6 +27,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
     createComment(comment)
     .then((comment) => {
       setPostComments([...postComments, comment]);
+      onAddComment(post._id, comment);
       setNewComment("");
       setIsLoading(false);
     })
@@ -139,7 +140,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
                   </div>
                 ))}
                 <input type="text" className="form-control mt-2" placeholder="Add a comment..." value={newComment} onChange={(e) => setNewComment(e.target.value)} />
-                <button className="btn btn-sm btn-success mt-2" onClick={() => {handleAddComment(post._id)}}>Add Comment</button>
+                <button className="btn btn-sm btn-success mt-2" onClick={() => handleAddComment(post._id)}>Add Comment</button>
               </div>
             </div>
           </div>
