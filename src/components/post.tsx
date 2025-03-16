@@ -62,7 +62,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
             <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{post.timestamp.toString()}</p>
           </div>
         </div>
-        {post.author.fullName === currentUser && (
+        {post.author.email === currentUser && (
             <div>
           <button className="btn btn-outline-dark btn-sm me-2" onClick={() => {setShowEditModal(true); setNewPostText(post.text);}}><i className="bi bi-pen"></i></button>
           <button className="btn btn-outline-danger btn-sm" onClick={() => onDelete(post._id)}><i className="bi bi-trash3"></i></button>
@@ -136,7 +136,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
                       <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{comment.timestamp.toString()}</p>
                       <p>{comment.text}</p>
                     </div>
-                    {comment.author.fullName === currentUser && (
+                    {comment.author.email === currentUser && (
                       <button className="btn btn-sm btn-danger ms-auto" onClick={() => console.log("here") /*handleDeleteComment(comment.id)*/}>Delete</button>
                     )}
                   </div>

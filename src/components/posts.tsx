@@ -135,7 +135,7 @@ const Posts: React.FC = () => {
             {<button className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
           {user && posts.map(post => (
-            <PostComponent key={post._id} post={post} currentUser={user.fullName} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate}></PostComponent>
+            <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate}></PostComponent>
           ))}
           </div>
     </div>

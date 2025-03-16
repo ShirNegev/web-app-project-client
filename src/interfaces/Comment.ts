@@ -3,6 +3,7 @@ interface Comment {
   text: string;
   author: {
     fullName: string;
+    email: string;
     imageUrl: string;
   };
   timestamp: Date;
