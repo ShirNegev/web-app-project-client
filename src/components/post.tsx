@@ -58,7 +58,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
     <div className="card mb-3 p-0">
       <div className="card-header d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
-          <img src={post.author.imageUrl} alt="User" className="rounded-circle me-2" width="40" height="40" />
+          <img src={post.author.imageUrl} alt="User" className="rounded-circle me-2" width="40" height="40" style={{objectFit: "cover"}} />
           <div>
             <strong>{post.author.fullName}</strong>
             <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{moment(post.timestamp).format('DD/MM/YYYY HH:mm:ss')}</p>
@@ -113,7 +113,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
             <div className="modal-content">
               <div className="modal-header">
                 <div className="d-flex align-items-center">
-                  <img src={post.author.imageUrl} alt="User" className="rounded-circle me-2" width="40" height="40" />
+                  <img src={post.author.imageUrl} alt="User" className="rounded-circle me-2" width="40" height="40" style={{objectFit: "cover"}}/>
                   <div>
                     <strong>{post.author.fullName}</strong>
                     <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{moment(post.timestamp).format('DD/MM/YYYY HH:mm:ss')}</p>
@@ -132,7 +132,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
                 {!isLoading && postComments.length === 0 && <p>No comments yet!</p>}
                 {postComments.map((comment) => (
                   <div key={comment.id} className="d-flex align-items-center border p-2 rounded mb-2">
-                    <img src={comment.author.imageUrl} alt="User" className="rounded-circle me-2" width="30" height="30" />
+                    <img src={comment.author.imageUrl} alt="User" className="rounded-circle me-2" width="30" height="30" style={{objectFit: "cover"}}/>
                     <div>
                       <strong>{comment.author.fullName}</strong>
                       <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{moment(comment.timestamp).format('DD/MM/YYYY HH:mm:ss')}</p>

@@ -18,7 +18,6 @@ import {
 const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPostText, setNewPostText] = useState("");
-  const [newPostImage, setNewPostImage] = useState("");
   const [newPostFile, setNewPostFile] = useState<File | null>(null);
   const { user } = useUserStore();
   const [showMyPosts, setShowMyPosts] = useState(false);
@@ -78,7 +77,6 @@ const Posts: React.FC = () => {
 
           setPosts([createdPost, ...posts]);
           setNewPostText("");
-          setNewPostImage("");
           setNewPostFile(null);
         })
         .catch((error) => {
@@ -153,7 +151,7 @@ const Posts: React.FC = () => {
           };
   
           editPost(id, post)
-          .then((createdPost) => {
+          .then(() => {
             setPosts(posts.map(post => post._id === id ? { ...post, text: newText, image: response.data.url} : post));
           })
           .catch((error) => {

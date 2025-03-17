@@ -18,3 +18,16 @@ html, body, #root {
     transform: rotate(360deg);
   }
 }
+
+.card {
+  border-radius: 1rem !important;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  background-color: white;
+}
+
+.btn-primary {
+  background-image: linear-gradient(to right, #25aae1, #40e495);
+  box-shadow: 0 4px 15px 0 rgba(49, 196, 190, 0.75);
+  border: none;
+}
