@@ -205,12 +205,20 @@ const Posts: React.FC = () => {
     <div className="container d-flex flex-column" style={{ width: "100%" }}>
       <div className="row">
           <div className="card p-3 mb-4">
-            <h5>Create a New Post</h5>         
-            {/* Button to open the AI modal */}
-            <button className="btn btn-secondary mb-3" onClick={() => setShowAiModal(true)}>
+            <h5>Create a New Post</h5>
+            {/* Input and Button in the same line using Flexbox */}
+            <div className="d-flex">
+            <input
+              type="text"
+              className="form-control mb-2"
+              placeholder="What's on your plate today?"
+              value={newPostText}
+              onChange={(e) => setNewPostText(e.target.value)}
+            />
+            <button className="btn btn-primary mb-2" onClick={() => setShowAiModal(true)}>
               Generate AI Post
             </button>
-            <input type="text" className="form-control mb-2" placeholder="What's on your plate today?" value={newPostText} onChange={(e) => setNewPostText(e.target.value)} />
+          </div>
             <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
             {<button className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
