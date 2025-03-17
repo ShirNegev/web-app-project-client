@@ -58,6 +58,8 @@ const Posts: React.FC = () => {
   }
 
   const addPost = () => {
+    console.log(newPostText.trim())
+    console.log(newPostFile)
     if (!newPostText.trim() || newPostFile == null) return;
 
     const { request } = uploadImage(newPostFile);
@@ -137,29 +139,44 @@ const Posts: React.FC = () => {
     setPosts(updatedPosts);
   }
 
-  const onUpdate = (id: string, newText: string, image: File | null) => {
-    if (!newText.trim() || image == null) return;
+  const onUpdate = (id: string, newText: string, image: File | null, postImage: string) => {
+    if (!newText.trim()) return;
 
-    const { request } = uploadImage(image);
+    if (image !== null) {
+      const { request } = uploadImage(image);
 
-    request
-      .then((response) => {
-        const post: PostSubmition = {
-          text: newText,
-          image: response.data.url,
-        };
-
-        editPost(id, post)
-        .then((createdPost) => {
-          setPosts(posts.map(post => post._id === id ? { ...post, text: newText, image: response.data.url} : post));
+      request
+        .then((response) => {
+          const post: PostSubmition = {
+            text: newText,
+            image: response.data.url,
+          };
+  
+          editPost(id, post)
+          .then((createdPost) => {
+            setPosts(posts.map(post => post._id === id ? { ...post, text: newText, image: response.data.url} : post));
+          })
+          .catch((error) => {
+            console.error("Error creating post:", error);
+          });
         })
         .catch((error) => {
-          console.error("Error creating post:", error);
+          console.error(error);
         });
+    } else {
+      const post: PostSubmition = {
+        text: newText,
+        image: postImage,
+      };
+
+      editPost(id, post)
+      .then(() => {
+        setPosts(posts.map(post => post._id === id ? { ...post, text: newText, image: postImage} : post));
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Error creating post:", error);
       });
+    }
   }
 
   return (

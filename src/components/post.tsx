@@ -6,7 +6,7 @@ import {getPostById} from "../services/post-service";
 import {createComment} from "../services/comment-service";
 import moment from 'moment';
 
-const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null) => void; onAddComment: (postId: string, comment: Comment) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate, onAddComment }) => {
+const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null, postImage: string) => void; onAddComment: (postId: string, comment: Comment) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate, onAddComment }) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -99,7 +99,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setShowEditModal(false)}>Close</button>
-                  <button type="button" className="btn btn-primary" onClick={() => {setShowEditModal(false); onUpdate(post._id, newPostText, newPostFile);}}>Save changes</button>
+                  <button type="button" className="btn btn-primary" onClick={() => {setShowEditModal(false); onUpdate(post._id, newPostText, newPostFile, post.image);}}>Save changes</button>
                 </div>
                 </div>
             </div>
