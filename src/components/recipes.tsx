@@ -18,7 +18,7 @@ const Recipes: React.FC = () => {
   }, []);
 
   return (
-    <div className="container d-flex flex-column align-items-center">
+    <div className="container d-flex flex-column align-items-center" style={{ width: "100%" }}>
       {recipes.map((recipe, index) => (
         <div key={index} className="card mb-3" style={{ width: "100%" }}>
           <img src={recipe.strMealThumb} alt={recipe.strMeal} className="card-img-top" />

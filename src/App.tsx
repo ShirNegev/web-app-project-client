@@ -8,10 +8,7 @@ import { useEffect, useState } from "react";
 import userService from './services/user-service';
 import User from "./interfaces/user";
 import { useUserStore } from "./store/useUserStore";
-import ProtectedRoute from "./components/protectedRoute";
-import IfLoggedRoute from "./components/ifLoggedRoute";
 import loader from "./assets/loader.svg";
-
 
 const App: React.FC = ()  =>{
   const { user, setUser } = useUserStore();
@@ -32,8 +29,15 @@ useEffect(() => {
     };
     setUser(user);
     setIsLoading(false);
+
+    if (window.location.pathname === "/login" || window.location.pathname === "/register") {
+      window.location.href = "/";
+    }
   }).catch((error: any) => {
     console.error(error);
+    if((window.location.pathname === "/") && error.response.status === 401) {
+      window.location.href = "/login";
+    }
     setIsLoading(false);
   });
 
@@ -48,9 +52,9 @@ useEffect(() => {
         <img className="spinner" src={loader} />
       </div> :
       <Routes>
-        <Route path="/" element={<ProtectedRoute><MainPage></MainPage></ProtectedRoute>}></Route>
-        <Route path="/login" element={<IfLoggedRoute><LoginPage></LoginPage></IfLoggedRoute>}></Route>
-        <Route path="/register" element={<IfLoggedRoute><RegisterPage></RegisterPage></IfLoggedRoute>}></Route>
+        <Route path="/" element={<MainPage></MainPage>}></Route>
+        <Route path="/login" element={<LoginPage></LoginPage>}></Route>
+        <Route path="/register" element={<RegisterPage></RegisterPage>}></Route>
        </Routes>}
     </Router>
   )
