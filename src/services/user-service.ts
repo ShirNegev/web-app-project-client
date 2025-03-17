@@ -55,5 +55,10 @@ const getUserInfo = () => {
   return { request, abort: () => abortController.abort() };
 };
 
+const updateUser = (user: User) => {
+  const abortController = new AbortController();
+  const request = apiClient.put<User>('/user', user, { signal: abortController.signal });
+  return { request, abort: () => abortController.abort() };
+}
 
-export default { register, login, uploadImage, getUserInfoFromGoogle, googleLogin, getUserInfo, logout };
+export default { register, login, uploadImage, getUserInfoFromGoogle, googleLogin, getUserInfo, logout, updateUser };

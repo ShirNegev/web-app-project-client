@@ -15,6 +15,7 @@ const Header: React.FC = () => {
     const { request } = userService.logout();
     request.then(() => {
       setUser(null);
+      navigate('/login');
     });
   }
 
@@ -32,13 +33,8 @@ const Header: React.FC = () => {
       </Link>
       {user && (
         <div className="flex-shrink-0 dropdown">
-            <img src={user.imageUrl} className="rounded-circle me-2" width="50" height="50" data-bs-toggle="dropdown" role='button'/>
+            <img src={user.imageUrl} className="rounded-circle me-2" width="50" height="50" data-bs-toggle="dropdown" role='button' style={{ objectFit: "cover" }}/>
           <ul className="dropdown-menu shadow">
-            <li>
-              <button className="dropdown-item" onClick={() => navigate('/profile')}>
-                Profile
-              </button>
-            </li>
             <li>
               <button className="dropdown-item text-danger" onClick={() => handleLogout()}>
                 Logout

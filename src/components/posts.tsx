@@ -19,7 +19,7 @@ const Posts: React.FC = () => {
   const [newPostText, setNewPostText] = useState("");
   const [newPostImage, setNewPostImage] = useState("");
   const [newPostFile, setNewPostFile] = useState<File | null>(null);
-  const { user, setUser } = useUserStore();
+  const { user } = useUserStore();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -141,7 +141,7 @@ const Posts: React.FC = () => {
   }
 
   return (
-    <div className="container d-flex flex-column" style={{ width: "60%" }}>
+    <div className="container d-flex flex-column" style={{ width: "100%" }}>
       <div className="row">
           <div className="card p-3 mb-4">
             <h5>Create a New Post</h5>

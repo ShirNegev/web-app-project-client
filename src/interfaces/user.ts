@@ -1,6 +1,6 @@
 interface User {
     fullName?: string;
-    email: string;
+    email?: string;
     password?: string;
     imageUrl?: string;
 }
