@@ -1,5 +1,6 @@
 import apiClient from "./api-client";
 import {Post, PostSubmition, PostWithPagination} from "../interfaces/Post";
+import { useNavigate } from "react-router-dom";
 
 export const getAllPosts = () => {
   return new Promise<PostWithPagination>((resolve, reject) => {
@@ -9,6 +10,7 @@ export const getAllPosts = () => {
         resolve(response.data as PostWithPagination);
       })
       .catch((error) => {
+        checkIfNotAuth(error);
         reject(error);
       });
   });
@@ -23,6 +25,7 @@ export const getPostById = (postId: string) => {
         resolve(post);
       })
       .catch((error) => {
+        checkIfNotAuth(error);
         reject(error);
       });
   });
@@ -37,6 +40,7 @@ export const getConnectedUserPosts = () => {
         resolve(posts);
       })
       .catch((error) => {
+        checkIfNotAuth(error);
         reject(error);
       });
   });
@@ -51,6 +55,7 @@ export const createPost = (post: PostSubmition) => {
         resolve(response.data);
       })
       .catch((error) => {
+        checkIfNotAuth(error);
         console.log(error);
         reject(error);
       });
@@ -76,6 +81,7 @@ export const likePost = (postId: string) => {
         resolve();
       })
       .catch((error) => {
+        checkIfNotAuth(error);
         console.log(error);
         reject(error);
       });
@@ -90,6 +96,7 @@ export const unlikePost = (postId: string) => {
         resolve();
       })
       .catch((error) => {
+        checkIfNotAuth(error);
         console.log(error);
         reject(error);
       });
@@ -105,6 +112,7 @@ export const editPost = (postId: string, post: PostSubmition) => {
         resolve();
       })
       .catch((error) => {
+        checkIfNotAuth(error);
         console.log(error);
         reject(error);
       });
@@ -120,8 +128,16 @@ export const deletePost = (postId: string) => {
         resolve();
       })
       .catch((error) => {
+        checkIfNotAuth(error);
         console.log(error);
         reject(error);
       });
   });
 };
+
+const checkIfNotAuth = (error: any) => {
+  console.log("there is error", error);
+  if (error.response.status === 401) {
+    window.location.href = "/login";
+  }
+}
