@@ -22,10 +22,15 @@ const Posts: React.FC = () => {
   const { user } = useUserStore();
   const [showMyPosts, setShowMyPosts] = useState(false);
 
-  const fetchAllPosts = async () => {
+  const [page, setPage] = useState(1);
+
+  const fetchAllPosts = async (page: number) => {
     try {
-      const data = await getAllPosts();
-      setPosts(data.posts);
+      const data = await getAllPosts(page);
+      if (page === 1)
+        setPosts(data.posts)
+      else
+        setPosts(prevPosts => [...prevPosts, ...data.posts]);
       console.log(data.posts);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -33,8 +38,8 @@ const Posts: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchAllPosts();
-  }, []);
+    fetchAllPosts(page);
+  }, [page]);
 
   const fetchMyPosts = async () => {
     try {
@@ -48,7 +53,8 @@ const Posts: React.FC = () => {
 
   const togglePostsAndMyPosts = () => {
     if (showMyPosts) {
-      fetchAllPosts();
+      setPage(1)
+      fetchAllPosts(1);
     } else {
       fetchMyPosts();
     }
@@ -192,6 +198,9 @@ const Posts: React.FC = () => {
           {user && posts.map(post => (
             <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate} onAddComment={onAddComment}></PostComponent>
           ))}
+          {!showMyPosts && <button className="btn btn-secondary mb-3" onClick={() => setPage(page + 1)}>
+            Load More Posts
+          </button>}
         </div>
     </div>
   );
