@@ -15,6 +15,8 @@ import {
   getConnectedUserPosts
 } from "../services/post-service";
 
+import {generatePostUsingAi} from "../services/ai-service";
+
 const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPostText, setNewPostText] = useState("");
@@ -24,6 +26,8 @@ const Posts: React.FC = () => {
   const [showMyPosts, setShowMyPosts] = useState(false);
 
   const [page, setPage] = useState(1);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [showAiModal, setShowAiModal] = useState(false);
 
   const fetchAllPosts = async (page: number) => {
     try {
@@ -32,7 +36,6 @@ const Posts: React.FC = () => {
         setPosts(data.posts)
       else
         setPosts(prevPosts => [...prevPosts, ...data.posts]);
-      console.log(data.posts);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -94,6 +97,19 @@ const Posts: React.FC = () => {
       .catch((error) => {
         console.error(error);
       });
+  };
+
+  const handleGenerateAiPost = async () => {
+    if (!aiPrompt.trim()) return;
+
+    try {
+      const aiPost = await generatePostUsingAi(aiPrompt);
+      setNewPostText(aiPost);
+      setAiPrompt("");
+      console.log("AI Generated Post:", aiPost);
+    } catch (error) {
+      console.error("Error generating AI post:", error);
+    }
   };
 
   const onLike = async (id: string) => {
@@ -189,7 +205,11 @@ const Posts: React.FC = () => {
     <div className="container d-flex flex-column" style={{ width: "100%" }}>
       <div className="row">
           <div className="card p-3 mb-4">
-            <h5>Create a New Post</h5>
+            <h5>Create a New Post</h5>         
+            {/* Button to open the AI modal */}
+            <button className="btn btn-secondary mb-3" onClick={() => setShowAiModal(true)}>
+              Generate AI Post
+            </button>
             <input type="text" className="form-control mb-2" placeholder="What's on your plate today?" value={newPostText} onChange={(e) => setNewPostText(e.target.value)} />
             <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
             {<button className="btn btn-primary" onClick={addPost}>Post</button>}
@@ -203,6 +223,45 @@ const Posts: React.FC = () => {
           {!showMyPosts && <button className="btn btn-secondary mb-3" onClick={() => setPage(page + 1)}>
             Load More Posts
           </button>}
+
+          {/* AI Post Modal */}
+          {showAiModal && (
+            <div
+              className="modal fade show d-block"
+              tabIndex={-1}
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+            >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="aiPostModalLabel">Generate AI Post</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowAiModal(false)}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Generate me a recipe for a tasty burger"
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                  />
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowAiModal(false)}>
+                    Close
+                  </button>
+                  <button type="button" className="btn btn-primary" onClick={()=> {handleGenerateAiPost(); if (aiPrompt.trim()) setShowAiModal(false);}}>
+                    Generate
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}        
         </div>
     </div>
   );
