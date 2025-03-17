@@ -16,7 +16,7 @@ const MainPage: React.FC = () => {
         <div className="col-md-6 align-items-center px-2">
         <Posts></Posts>
         </div>
-        <div className="col-md-2 container d-flex align-items-center px-4">
+        <div className="col-md-2 container d-flex px-4">
         <Recipes></Recipes>
         </div>
     </div>

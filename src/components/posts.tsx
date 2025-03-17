@@ -11,7 +11,8 @@ import {
   likePost,
   unlikePost,
   deletePost,
-  editPost
+  editPost,
+  getConnectedUserPosts
 } from "../services/post-service";
 
 const Posts: React.FC = () => {
@@ -20,22 +21,45 @@ const Posts: React.FC = () => {
   const [newPostImage, setNewPostImage] = useState("");
   const [newPostFile, setNewPostFile] = useState<File | null>(null);
   const { user } = useUserStore();
+  const [showMyPosts, setShowMyPosts] = useState(false);
+
+  const fetchAllPosts = async () => {
+    try {
+      const data = await getAllPosts();
+      setPosts(data.posts);
+      console.log(data.posts);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const data = await getAllPosts();
-        setPosts(data.posts);
-        console.log(data.posts);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
-
-    fetchPosts();
+    fetchAllPosts();
   }, []);
 
+  const fetchMyPosts = async () => {
+    try {
+      const data = await getConnectedUserPosts();
+      setPosts(data);
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  const togglePostsAndMyPosts = () => {
+    if (showMyPosts) {
+      fetchAllPosts();
+    } else {
+      fetchMyPosts();
+    }
+
+    setShowMyPosts(!showMyPosts);
+  }
+
   const addPost = () => {
+    console.log(newPostText.trim())
+    console.log(newPostFile)
     if (!newPostText.trim() || newPostFile == null) return;
 
     const { request } = uploadImage(newPostFile);
@@ -115,29 +139,44 @@ const Posts: React.FC = () => {
     setPosts(updatedPosts);
   }
 
-  const onUpdate = (id: string, newText: string, image: File | null) => {
-    if (!newText.trim() || image == null) return;
+  const onUpdate = (id: string, newText: string, image: File | null, postImage: string) => {
+    if (!newText.trim()) return;
 
-    const { request } = uploadImage(image);
+    if (image !== null) {
+      const { request } = uploadImage(image);
 
-    request
-      .then((response) => {
-        const post: PostSubmition = {
-          text: newText,
-          image: response.data.url,
-        };
-
-        editPost(id, post)
-        .then((createdPost) => {
-          setPosts(posts.map(post => post._id === id ? { ...post, text: newText, image: response.data.url} : post));
+      request
+        .then((response) => {
+          const post: PostSubmition = {
+            text: newText,
+            image: response.data.url,
+          };
+  
+          editPost(id, post)
+          .then((createdPost) => {
+            setPosts(posts.map(post => post._id === id ? { ...post, text: newText, image: response.data.url} : post));
+          })
+          .catch((error) => {
+            console.error("Error creating post:", error);
+          });
         })
         .catch((error) => {
-          console.error("Error creating post:", error);
+          console.error(error);
         });
+    } else {
+      const post: PostSubmition = {
+        text: newText,
+        image: postImage,
+      };
+
+      editPost(id, post)
+      .then(() => {
+        setPosts(posts.map(post => post._id === id ? { ...post, text: newText, image: postImage} : post));
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Error creating post:", error);
       });
+    }
   }
 
   return (
@@ -149,10 +188,13 @@ const Posts: React.FC = () => {
             <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
             {<button className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
+          <button className="btn btn-secondary mb-3" onClick={()=> {togglePostsAndMyPosts();}}>
+            {showMyPosts ? "Show All Posts" : "Show My Posts"}
+          </button>
           {user && posts.map(post => (
             <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate} onAddComment={onAddComment}></PostComponent>
           ))}
-          </div>
+        </div>
     </div>
   );
 };

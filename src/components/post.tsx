@@ -4,8 +4,9 @@ import Post from "../interfaces/Post";
 import Comment, { CommentSubmition } from "../interfaces/Comment";
 import {getPostById} from "../services/post-service";
 import {createComment} from "../services/comment-service";
+import moment from 'moment';
 
-const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null) => void; onAddComment: (postId: string, comment: Comment) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate, onAddComment }) => {
+const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onDelete: (id: string) => void; onLike: (id: string) => void; onUpdate: (id: string, newText: string, image: File | null, postImage: string) => void; onAddComment: (postId: string, comment: Comment) => void;}> = ({ post, currentUser, onDelete, onLike, onUpdate, onAddComment }) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -60,7 +61,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
           <img src={post.author.imageUrl} alt="User" className="rounded-circle me-2" width="40" height="40" />
           <div>
             <strong>{post.author.fullName}</strong>
-            <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{post.timestamp.toString()}</p>
+            <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{moment(post.timestamp).format('DD/MM/YYYY HH:mm:ss')}</p>
           </div>
         </div>
         {post.author.email === currentUser && (
@@ -98,7 +99,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setShowEditModal(false)}>Close</button>
-                  <button type="button" className="btn btn-primary" onClick={() => {setShowEditModal(false); onUpdate(post._id, newPostText, newPostFile);}}>Save changes</button>
+                  <button type="button" className="btn btn-primary" onClick={() => {setShowEditModal(false); onUpdate(post._id, newPostText, newPostFile, post.image);}}>Save changes</button>
                 </div>
                 </div>
             </div>
@@ -115,7 +116,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
                   <img src={post.author.imageUrl} alt="User" className="rounded-circle me-2" width="40" height="40" />
                   <div>
                     <strong>{post.author.fullName}</strong>
-                    <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{post.timestamp.toString()}</p>
+                    <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{moment(post.timestamp).format('DD/MM/YYYY HH:mm:ss')}</p>
                   </div>
                 </div>
                 <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
@@ -134,7 +135,7 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
                     <img src={comment.author.imageUrl} alt="User" className="rounded-circle me-2" width="30" height="30" />
                     <div>
                       <strong>{comment.author.fullName}</strong>
-                      <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{comment.timestamp.toString()}</p>
+                      <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>{moment(comment.timestamp).format('DD/MM/YYYY HH:mm:ss')}</p>
                       <p>{comment.text}</p>
                     </div>
                   </div>
