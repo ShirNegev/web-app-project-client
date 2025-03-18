@@ -66,8 +66,8 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
         </div>
         {post.author.email === currentUser && (
             <div>
-          <button className="btn btn-outline-dark btn-sm me-2" onClick={() => {setShowEditModal(true); setNewPostText(post.text);}}><i className="bi bi-pen"></i></button>
-          <button className="btn btn-outline-danger btn-sm" onClick={() => onDelete(post._id)}><i className="bi bi-trash3"></i></button>
+          <span className="icon-btn-secondary me-2" onClick={() => {setShowEditModal(true); setNewPostText(post.text);}}><i className="bi bi-pen"></i></span>
+          <span className="" onClick={() => onDelete(post._id)}><i className="bi bi-trash3 icon-btn-danger"></i></span>
           </div>
         )}
       </div>

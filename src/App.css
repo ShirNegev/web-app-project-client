@@ -27,7 +27,45 @@ html, body, #root {
 }
 
 .btn-primary {
-  background-image: linear-gradient(to right, #25aae1, #40e495);
-  box-shadow: 0 4px 15px 0 rgba(49, 196, 190, 0.75);
-  border: none;
+  background-image: linear-gradient(to right, #fc6076, #ff9a44);
+  padding-top: 0.4rem !important;
+  padding-bottom: 0.4rem !important;
+}
+
+.btn {
+  text-align: center !important;
+  border: none !important;
+  transition: 0.3s !important;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 2px 10px 0 rgba(252, 104, 110, 0.75);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 2px 10px 0 rgba(45, 54, 65, 0.75);
+}
+
+.btn-secondary {
+  background-image: linear-gradient(to right, #29323c, #485563);
+  padding-top: 0.4rem !important;
+  padding-bottom: 0.4rem !important;
+}
+
+.icon-btn-danger {
+  color: #dc3545;
+  cursor: pointer;
+}
+
+.icon-btn-danger:hover {
+  box-shadow: 0 2px 10px 0 #dc3545;
+}
+
+.icon-btn-secondary {
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.icon-btn-secondary:hover {
+  box-shadow: 0 2px 10px 0 #6c757d;
 }
