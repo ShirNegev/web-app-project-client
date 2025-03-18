@@ -8,8 +8,7 @@ const MainPage: React.FC = () => {
   }
 
   return (
-    <div className="row" style={{ width: "100%" }}>
-        <h2 className="container d-flex justify-content-center align-items-center">Food feed</h2>
+    <div className="row mt-4" style={{ width: "100%" }}>
         <div className="col-md-4 container d-flex flex-column align-items-center px-5">
         <Profile onUpdateProfile={onUpdateProfile}></Profile>
         </div>
