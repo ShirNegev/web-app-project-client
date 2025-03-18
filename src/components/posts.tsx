@@ -208,17 +208,17 @@ const Posts: React.FC = () => {
             <div className="d-flex">
             <input
               type="text"
-              className="form-control mb-2"
+              className="form-control mb-2 me-2"
               placeholder="What's on your plate today?"
               value={newPostText}
               onChange={(e) => setNewPostText(e.target.value)}
             />
             <button className="btn btn-primary mb-2" onClick={() => setShowAiModal(true)}>
-              Generate AI Post
+            <i className="bi bi-stars"></i>
             </button>
           </div>
             <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
-            {<button className="btn btn-primary" onClick={addPost}>Post</button>}
+            {<button disabled={!newPostText.trim() || !newPostFile} className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
           <button className="btn btn-secondary mb-3" onClick={()=> {togglePostsAndMyPosts();}}>
             {showMyPosts ? "Show All Posts" : "Show My Posts"}

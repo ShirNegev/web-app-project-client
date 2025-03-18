@@ -65,23 +65,36 @@ const PostComponent: React.FC<{ post: Post; currentUser: string | undefined; onD
           </div>
         </div>
         {post.author.email === currentUser && (
-            <div>
-          <span className="icon-btn-secondary me-2" onClick={() => {setShowEditModal(true); setNewPostText(post.text);}}><i className="bi bi-pen"></i></span>
-          <span className="" onClick={() => onDelete(post._id)}><i className="bi bi-trash3 icon-btn-danger"></i></span>
-          </div>
+          <div className="flex-shrink-0 dropdown">
+            <div data-bs-toggle="dropdown" role='button' className="me-2"><i className="bi bi-three-dots"></i></div>
+        <ul className="dropdown-menu shadow">
+          <li>
+            <button className="dropdown-item" onClick={() => {setShowEditModal(true); setNewPostText(post.text);}}>
+              Edit
+            </button>
+          </li>
+          <li>
+            <button className="dropdown-item text-danger" onClick={() => onDelete(post._id)}>
+              Delete
+            </button>
+          </li>
+        </ul>
+      </div>
         )}
       </div>
+      <img src={post.image} alt="Post" className="img-fluid mb-2" />
       <div className="card-body text-center">
-        <img src={post.image} alt="Post" className="img-fluid mb-2" />
         <p>{post.text}</p>
       </div>
-      <div className="card-footer d-flex bg-white">
+      <div className="p-3"><hr className="hr" />
+      <div className="">
         <button className={`btn me-3 ${isLiked() ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => onLike(post._id)}>
           👍 {post.likes}
         </button>
         <button className="btn btn-outline-secondary" onClick={() => {setShowModal(true); getCommentsByPostId(post._id);}}>
           💬 {post.comments.length}
         </button>
+        </div>
       </div>
       
       {/* show edit modal*/}
