@@ -21,6 +21,7 @@ export interface Post extends PostSubmition {
 export interface PostWithPagination {
   posts: [Post];
   currentPage: number;
+  maxPage: number;
 }
 
 export default Post;

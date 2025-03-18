@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PostComponent from "./post";
 import Post, { PostSubmition } from "../interfaces/Post";
 import { useUserStore } from "../store/useUserStore";
@@ -26,8 +26,10 @@ const Posts: React.FC = () => {
   const [showMyPosts, setShowMyPosts] = useState(false);
 
   const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(1);
   const [aiPrompt, setAiPrompt] = useState("");
   const [showAiModal, setShowAiModal] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const fetchAllPosts = async (page: number) => {
     try {
@@ -36,6 +38,8 @@ const Posts: React.FC = () => {
         setPosts(data.posts)
       else
         setPosts(prevPosts => [...prevPosts, ...data.posts]);
+
+      setMaxPage(data.maxPage);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -88,7 +92,11 @@ const Posts: React.FC = () => {
           setPosts([createdPost, ...posts]);
           setNewPostText("");
           setNewPostImage("");
+
           setNewPostFile(null);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ''; // Reset the file input value
+          }
         })
         .catch((error) => {
           console.error("Error creating post:", error);
@@ -219,7 +227,7 @@ const Posts: React.FC = () => {
               Generate AI Post
             </button>
           </div>
-            <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
+            <input type="file" className="form-control mb-2" accept="image/*" ref={fileInputRef} onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
             {<button className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
           <button className="btn btn-secondary mb-3" onClick={()=> {togglePostsAndMyPosts();}}>
@@ -228,7 +236,7 @@ const Posts: React.FC = () => {
           {user && posts.map(post => (
             <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate} onAddComment={onAddComment}></PostComponent>
           ))}
-          {!showMyPosts && <button className="btn btn-secondary mb-3" onClick={() => setPage(page + 1)}>
+          {!showMyPosts && (page < maxPage) && <button className="btn btn-secondary mb-3" onClick={() => setPage(page + 1)}>
             Load More Posts
           </button>}
 
