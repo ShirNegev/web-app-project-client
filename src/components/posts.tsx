@@ -20,7 +20,6 @@ import {generatePostUsingAi} from "../services/ai-service";
 const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPostText, setNewPostText] = useState("");
-  const [newPostImage, setNewPostImage] = useState("");
   const [newPostFile, setNewPostFile] = useState<File | null>(null);
   const { user } = useUserStore();
   const [showMyPosts, setShowMyPosts] = useState(false);
@@ -87,7 +86,6 @@ const Posts: React.FC = () => {
 
           setPosts([createdPost, ...posts]);
           setNewPostText("");
-          setNewPostImage("");
           setNewPostFile(null);
         })
         .catch((error) => {
@@ -204,33 +202,37 @@ const Posts: React.FC = () => {
   return (
     <div className="container d-flex flex-column" style={{ width: "100%" }}>
       <div className="row">
-          <div className="card p-3 mb-4">
+          <div className="card p-3 mb-2">
             <h5>Create a New Post</h5>
             {/* Input and Button in the same line using Flexbox */}
             <div className="d-flex">
             <input
               type="text"
-              className="form-control mb-2"
+              className="form-control mb-2 me-2"
               placeholder="What's on your plate today?"
               value={newPostText}
               onChange={(e) => setNewPostText(e.target.value)}
             />
             <button className="btn btn-primary mb-2" onClick={() => setShowAiModal(true)}>
-              Generate AI Post
+            <i className="bi bi-stars"></i>
             </button>
           </div>
             <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
-            {<button className="btn btn-primary" onClick={addPost}>Post</button>}
+            {<button disabled={!newPostText.trim() || !newPostFile} className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
-          <button className="btn btn-secondary mb-3" onClick={()=> {togglePostsAndMyPosts();}}>
-            {showMyPosts ? "Show All Posts" : "Show My Posts"}
-          </button>
+          <div className="form-check form-switch ms-1 mb-2">
+            <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onChange={()=> {togglePostsAndMyPosts();}} checked={showMyPosts}/>
+            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">{showMyPosts ? "Show All Posts" : "Show My Posts"}</label>
+          </div>
           {user && posts.map(post => (
             <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate} onAddComment={onAddComment}></PostComponent>
           ))}
-          {!showMyPosts && <button className="btn btn-secondary mb-3" onClick={() => setPage(page + 1)}>
-            Load More Posts
-          </button>}
+          {!showMyPosts && 
+          <div className="d-flex justify-content-center">
+            <button className="btn btn-primary mb-3" onClick={() => setPage(page + 1)} style={{ width: "25%" }}>
+              <i className="bi bi-plus-lg me-2"></i>Load More Posts
+            </button>
+          </div>}
 
           {/* AI Post Modal */}
           {showAiModal && (

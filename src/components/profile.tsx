@@ -84,7 +84,7 @@ const ProfileComponent: React.FC<{onUpdateProfile: () => void}> = ({onUpdateProf
           <p className="text-secondary">{user?.email}</p>
           <button
             type="button"
-            className="btn btn-primary mt-3"
+            className="btn btn-primary"
             onClick={() => {
               setShowEditModal(true);
               setFullName(user?.fullName ?? '');

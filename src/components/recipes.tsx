@@ -22,7 +22,7 @@ const Recipes: React.FC = () => {
       {recipes.map((recipe, index) => (
         <div key={index} className="card mb-3" style={{ width: "100%" }}>
           <img src={recipe.strMealThumb} alt={recipe.strMeal} className="card-img-top" />
-          <div className="card-body text-center">
+          <div className="card-body text-center p-0 px-2 mt-1">
             <h6 className="card-title">{recipe.strMeal}</h6>
             <p>
               <a href={recipe.strSource} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary">
