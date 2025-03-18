@@ -202,7 +202,7 @@ const Posts: React.FC = () => {
   return (
     <div className="container d-flex flex-column" style={{ width: "100%" }}>
       <div className="row">
-          <div className="card p-3 mb-4">
+          <div className="card p-3 mb-2">
             <h5>Create a New Post</h5>
             {/* Input and Button in the same line using Flexbox */}
             <div className="d-flex">
@@ -220,15 +220,19 @@ const Posts: React.FC = () => {
             <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
             {<button disabled={!newPostText.trim() || !newPostFile} className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
-          <button className="btn btn-secondary mb-3" onClick={()=> {togglePostsAndMyPosts();}}>
-            {showMyPosts ? "Show All Posts" : "Show My Posts"}
-          </button>
+          <div className="form-check form-switch ms-1 mb-2">
+            <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onChange={()=> {togglePostsAndMyPosts();}} checked={showMyPosts}/>
+            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">{showMyPosts ? "Show All Posts" : "Show My Posts"}</label>
+          </div>
           {user && posts.map(post => (
             <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate} onAddComment={onAddComment}></PostComponent>
           ))}
-          {!showMyPosts && <button className="btn btn-secondary mb-3" onClick={() => setPage(page + 1)}>
-            Load More Posts
-          </button>}
+          {!showMyPosts && 
+          <div className="d-flex justify-content-center">
+            <button className="btn btn-primary mb-3" onClick={() => setPage(page + 1)} style={{ width: "25%" }}>
+              <i className="bi bi-plus-lg me-2"></i>Load More Posts
+            </button>
+          </div>}
 
           {/* AI Post Modal */}
           {showAiModal && (

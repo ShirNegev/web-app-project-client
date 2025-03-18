@@ -150,7 +150,7 @@ const Login: React.FC = () => {
         </button>
       </form>
       <div className="text-center mt-3">
-        <button className="btn btn-dark w-100" onClick={() => onGoogleLogin()}>
+        <button className="btn btn-secondary w-100" onClick={() => onGoogleLogin()}>
           <i className="bi bi-google me-2"></i>Sign in with Google
         </button>
       </div>
