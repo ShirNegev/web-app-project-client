@@ -1,6 +1,5 @@
 import apiClient from "./api-client";
 import {Post, PostSubmition, PostWithPagination} from "../interfaces/Post";
-import { useNavigate } from "react-router-dom";
 
 export const getAllPosts = (page: number) => {
   return new Promise<PostWithPagination>((resolve, reject) => {

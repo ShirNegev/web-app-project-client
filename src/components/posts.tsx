@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PostComponent from "./post";
 import Post, { PostSubmition } from "../interfaces/Post";
 import { useUserStore } from "../store/useUserStore";
@@ -25,8 +25,10 @@ const Posts: React.FC = () => {
   const [showMyPosts, setShowMyPosts] = useState(false);
 
   const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(1);
   const [aiPrompt, setAiPrompt] = useState("");
   const [showAiModal, setShowAiModal] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const fetchAllPosts = async (page: number) => {
     try {
@@ -35,6 +37,8 @@ const Posts: React.FC = () => {
         setPosts(data.posts)
       else
         setPosts(prevPosts => [...prevPosts, ...data.posts]);
+
+      setMaxPage(data.maxPage);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -87,6 +91,10 @@ const Posts: React.FC = () => {
           setPosts([createdPost, ...posts]);
           setNewPostText("");
           setNewPostFile(null);
+
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ''; // Reset the file input value
+          }
         })
         .catch((error) => {
           console.error("Error creating post:", error);
@@ -217,7 +225,7 @@ const Posts: React.FC = () => {
             <i className="bi bi-stars"></i>
             </button>
           </div>
-            <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
+            <input type="file" className="form-control mb-2" accept="image/*" ref={fileInputRef} onChange={(e) => setNewPostFile(e.target.files ? e.target.files[0] : null)} />
             {<button disabled={!newPostText.trim() || !newPostFile} className="btn btn-primary" onClick={addPost}>Post</button>}
           </div>
           <div className="form-check form-switch ms-1 mb-2">
@@ -227,7 +235,7 @@ const Posts: React.FC = () => {
           {user && posts.map(post => (
             <PostComponent key={post._id} post={post} currentUser={user.email} onLike={onLike} onDelete={onDelete} onUpdate={onUpdate} onAddComment={onAddComment}></PostComponent>
           ))}
-          {!showMyPosts && 
+          {!showMyPosts && (page < maxPage) &&
           <div className="d-flex justify-content-center">
             <button className="btn btn-primary mb-3" onClick={() => setPage(page + 1)} style={{ width: "25%" }}>
               <i className="bi bi-plus-lg me-2"></i>Load More Posts
