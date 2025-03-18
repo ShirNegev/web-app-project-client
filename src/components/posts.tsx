@@ -20,7 +20,6 @@ import {generatePostUsingAi} from "../services/ai-service";
 const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPostText, setNewPostText] = useState("");
-  const [newPostImage, setNewPostImage] = useState("");
   const [newPostFile, setNewPostFile] = useState<File | null>(null);
   const { user } = useUserStore();
   const [showMyPosts, setShowMyPosts] = useState(false);
@@ -91,7 +90,6 @@ const Posts: React.FC = () => {
 
           setPosts([createdPost, ...posts]);
           setNewPostText("");
-          setNewPostImage("");
 
           setNewPostFile(null);
           if (fileInputRef.current) {
